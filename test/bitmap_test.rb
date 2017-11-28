@@ -3,7 +3,7 @@ require_relative 'helper'
 class BitmapTest < Minitest::Test
 
   def test_create_new_instance_with_white_colour
-    bitmap = Bitmap.new(3, 2)
+    bitmap = Bitmap.new(2, 3)
 
     assert_equal 'O', bitmap[1, 1]
     assert_equal 'O', bitmap[1, 2]
@@ -67,8 +67,8 @@ class BitmapTest < Minitest::Test
   def test_draw_horizontal_paints_a_segment_on_row_between_two_columns
     bitmap = Bitmap.new(5, 2)
 
-    bitmap.draw_horizontal!(1, 1, 5, 'R')
-    bitmap.draw_horizontal!(2, 2, 4, 'Y')
+    bitmap.draw_horizontal!(1, 5, 1, 'R')
+    bitmap.draw_horizontal!(2, 4, 2, 'Y')
 
     assert_equal 'R', bitmap[1, 1]
     assert_equal 'R', bitmap[2, 1]
@@ -95,14 +95,14 @@ class BitmapTest < Minitest::Test
     bitmap = Bitmap.new(5, 6)
 
     square_bitmap.paint!(1, 1, 'R')
-    square_bitmap.paint!(2, 1, 'Y')
+    square_bitmap.paint!(1, 2, 'Y')
     bitmap.paint!(1, 3, 'A')
     bitmap.draw_vertical!(2, 3, 6, 'W')
     bitmap.draw_horizontal!(3, 5, 2, 'Z')
 
     square_bitmap_expected =
       "RO\n" +
-      "YO"
+      "YO\n"
 
     bitmap_expected =
       "OOOOO\n" +
