@@ -11,7 +11,6 @@ class BitmapEditor
     File.open(file).each_line.with_index(1) do |line, line_number|
       begin
         command, *args = line.chomp.split(" ")
-        sanitize_and_validate_arguments!(args)
 
         execute_command!(command, args)
       rescue ArgumentError => error
@@ -25,6 +24,8 @@ class BitmapEditor
   end
 
   def execute_command!(command, args)
+    sanitize_and_validate_arguments!(args)
+
     case command
     when 'I'
       fail "Image already created!" if @bitmap
@@ -73,7 +74,7 @@ class BitmapEditor
         if value.between?(1, 250)
           value
         else
-          fail "Integer '#{value}' out of bounds"
+          fail ArgumentError.new("Integer '#{value}' out of bounds")
         end
       else
         fail "Parameter unknown: '#{arg}'"
@@ -87,7 +88,7 @@ class BitmapEditor
 
   def validate_arguments_size(command, args, n)
     if args.size != n
-      fail "Wrong number of arguments for command '#{command}' (given #{args.size}, expected #{n})"
+      fail ArgumentError.new("Wrong number of arguments for command '#{command}' (given #{args.size}, expected #{n})")
     end
   end
 end
