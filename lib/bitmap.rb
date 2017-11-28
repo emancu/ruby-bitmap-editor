@@ -1,27 +1,38 @@
 class Bitmap
-  # The technical test describes a MxN Matrix. Usually M is rows and N columns,
-  # however in the example I can see that M represents the columns and N the rows.
   def initialize(m, n)
     @bitmap = Array.new(n){ Array.new(m, 'O') }
+    @row_count = n
+    @column_count = m
   end
 
   def clear!
     @bitmap.each { |row| row.map!{'O'} }
   end
 
-  # 1 <= x, y <= 250 ; colour a signle char
   def paint!(x, y, colour)
+    assert_valid_column!(x)
+    assert_valid_row!(y)
+
     @bitmap[y-1][x-1] = colour
   end
 
-  #TODO: Check numbers are inside the matrix
   def draw_vertical!(x, y1, y2, colour)
+    assert_valid_column!(x)
+    assert_valid_row!(y1)
+    assert_valid_row!(y2)
+    assert_valid_segment!(y1, y2)
+
     (y1..y2).each do |i|
       @bitmap[i-1][x-1] = colour
     end
   end
 
   def draw_horizontal!(x1, x2, y, colour)
+    assert_valid_column!(x1)
+    assert_valid_column!(x2)
+    assert_valid_segment!(x1, x2)
+    assert_valid_row!(y)
+
     row = @bitmap[y-1]
 
     (x1..x2).each do |j|
@@ -41,6 +52,23 @@ class Bitmap
   end
 
   def [](c, r)
+    assert_valid_column!(c)
+    assert_valid_row!(r)
+
     @bitmap[r-1][c-1]
+  end
+
+  private
+
+  def assert_valid_column!(c)
+    fail ArgumentError.new("invalid column") unless c.between?(1, @column_count)
+  end
+
+  def assert_valid_row!(r)
+    fail ArgumentError.new("invalid row") unless r.between?(1, @row_count)
+  end
+
+  def assert_valid_segment!(start, stop)
+    fail ArgumentError.new("invalid segment") if (start..stop).to_a.empty?
   end
 end
