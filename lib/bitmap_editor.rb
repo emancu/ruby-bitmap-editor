@@ -15,7 +15,7 @@ class BitmapEditor
 
         execute_command!(command, args)
       rescue RuntimeError => error
-        puts "Error parsing the file in line: #{line_number}.", error.message
+        puts "Error parsing the file in line: #{line_number}", error.message
         exit 1
       end
     end
@@ -29,27 +29,27 @@ class BitmapEditor
       # What happens if you create more than one image? Error or ignore?
       @bitmap ||= Bitmap.new(*args)
     when 'C'
-      validate_bitmap_present(command)
+      validate_bitmap_presence(command)
       validate_arguments_size(command, args, 0)
 
       @bitmap.clear!
     when 'L'
-      validate_bitmap_present(command)
+      validate_bitmap_presence(command)
       validate_arguments_size(command, args, 3)
 
       @bitmap.paint!(*args)
     when 'V'
-      validate_bitmap_present(command)
+      validate_bitmap_presence(command)
       validate_arguments_size(command, args, 4)
 
       @bitmap.draw_vertical!(*args)
     when 'H'
-      validate_bitmap_present(command)
+      validate_bitmap_presence(command)
       validate_arguments_size(command, args, 4)
 
       @bitmap.draw_horizontal!(*args)
     when 'S'
-      validate_bitmap_present(command)
+      validate_bitmap_presence(command)
       validate_arguments_size(command, args, 0)
 
       puts @bitmap.inspect
@@ -78,7 +78,7 @@ class BitmapEditor
     end
   end
 
-  def validate_bitmap_present(command)
+  def validate_bitmap_presence(command)
     fail "Can not execute command '#{command}' if there is no image created first" unless @bitmap
   end
 
