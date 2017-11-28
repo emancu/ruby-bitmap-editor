@@ -1,11 +1,11 @@
 require_relative 'helper'
 
 Protest.describe 'BitmapEditor' do
-  context '.execute_command!' do
-    setup do
-      @editor = BitmapEditor.new
-    end
+  setup do
+    @editor = BitmapEditor.new
+  end
 
+  context '.execute_command!' do
     context 'I' do
       test 'validates there is no bitmap created' do
         attach_bitmap(@editor)
@@ -197,6 +197,60 @@ Protest.describe 'BitmapEditor' do
         assert_error_message(RuntimeError, /Parameter unknown: 'RR'/) do
           @editor.execute_command!('L', ['2', '1', 'RR'])
         end
+      end
+    end
+  end
+
+  context '.run' do
+    test 'a correct file is needed' do
+      out, _ = capture_io do
+        refute @editor.run(nil)
+      end
+
+      assert_equal "please provide correct file", out.chomp
+
+      out, _ = capture_io do
+        refute @editor.run("/tmp/this/should/not/exist.file")
+      end
+
+      assert_equal "please provide correct file", out.chomp
+    end
+
+    context 'with an input file with errors' do
+      test 'stops execution on unknown command' do
+        out, _ = capture_io do
+          refute @editor.run("test/fixtures/unknown_command.txt")
+        end
+
+        assert out.match(/Error parsing the file in line: 1/)
+        assert out.match(/unrecognised command 'W' :\(/)
+      end
+
+      test 'stops execution if the order of the commands is incorrect' do
+        out, _ = capture_io do
+          refute @editor.run("test/fixtures/bad_order_commands.txt")
+        end
+
+        assert out.match(/Error parsing the file in line: 1/)
+        assert out.match(/Can not execute command 'S' if there is no image created first/)
+      end
+
+      test 'stops execution if a command receives wrong arguments' do
+        out, _ = capture_io do
+          refute @editor.run("test/fixtures/wrong_arguments.txt")
+        end
+
+        assert out.match(/invalid column \(line: 2\)/)
+      end
+    end
+
+    context 'with a valid input file' do
+      test 'execute all the commands' do
+        out, _ = capture_io do
+          assert @editor.run("test/fixtures/valid_input_file.txt")
+        end
+
+        assert_equal "OOXOOXOO\nOOXOOXOO\nXXXXXXXX\nOOXKKXOO\nOOXKKXOO\nXXXXXXXX\nOOXOOXOO\nOOXOOXOO\n", out
       end
     end
   end

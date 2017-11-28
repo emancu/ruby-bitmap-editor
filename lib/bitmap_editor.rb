@@ -6,7 +6,10 @@ class BitmapEditor
   end
 
   def run(file)
-    return puts "please provide correct file" if file.nil? || !File.exists?(file)
+    if file.nil? || !File.exists?(file)
+      puts "please provide correct file"
+      return
+    end
 
     File.open(file).each_line.with_index(1) do |line, line_number|
       begin
@@ -15,12 +18,14 @@ class BitmapEditor
         execute_command!(command, args)
       rescue ArgumentError => error
         puts "#{error.message} (line: #{line_number})"
-        exit 1
+        return
       rescue RuntimeError => error
         puts "Error parsing the file in line: #{line_number}", error.message
-        exit 1
+        return
       end
     end
+
+    true
   end
 
   def execute_command!(command, args)
