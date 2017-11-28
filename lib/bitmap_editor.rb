@@ -14,6 +14,9 @@ class BitmapEditor
         sanitize_and_validate_arguments!(args)
 
         execute_command!(command, args)
+      rescue ArgumentError => error
+        puts "#{error.message} (line: #{line_number})"
+        exit 1
       rescue RuntimeError => error
         puts "Error parsing the file in line: #{line_number}", error.message
         exit 1
@@ -24,10 +27,10 @@ class BitmapEditor
   def execute_command!(command, args)
     case command
     when 'I'
+      fail "Image already created!" if @bitmap
       validate_arguments_size(command, args, 2)
 
-      # What happens if you create more than one image? Error or ignore?
-      @bitmap ||= Bitmap.new(*args)
+      @bitmap = Bitmap.new(*args)
     when 'C'
       validate_bitmap_presence(command)
       validate_arguments_size(command, args, 0)
