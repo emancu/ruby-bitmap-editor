@@ -40,6 +40,20 @@ class Bitmap
     end
   end
 
+  def fill!(x, y, colour)
+    matching_colour = self[x, y]
+
+    coords_queue = [[x, y]]
+
+    until coords_queue.empty? do
+      c, r = coords_queue.shift
+
+      paint!(c, r, colour)
+
+      coords_queue.push(*adjacent_pixels_with_same_colour(c, r, matching_colour))
+    end
+  end
+
   def inspect
     str = ""
 
@@ -70,5 +84,16 @@ class Bitmap
 
   def assert_valid_segment!(start, stop)
     fail ArgumentError.new("invalid segment") if (start..stop).to_a.empty?
+  end
+
+  def adjacent_pixels_with_same_colour(c, r, colour)
+    adjacents = []
+
+    adjacents << [c-1, r] if self[c-1, r] == colour rescue false
+    adjacents << [c+1, r] if self[c+1, r] == colour rescue false
+    adjacents << [c, r-1] if self[c, r-1] == colour rescue false
+    adjacents << [c, r+1] if self[c, r+1] == colour rescue false
+
+    adjacents
   end
 end

@@ -131,6 +131,94 @@ Protest.describe 'Bitmap' do
     end
   end
 
+  context 'fill!' do
+    test 'fill the entire bitmap if there are no different colours' do
+      bitmap = Bitmap.new(4, 5)
+
+      bitmap.fill!(1, 1, 'K')
+
+      expected =
+        "KKKK\n" +
+        "KKKK\n" +
+        "KKKK\n" +
+        "KKKK\n" +
+        "KKKK\n"
+
+      assert_equal expected, bitmap.inspect
+    end
+
+    test 'fills a chunk of the bitmap with a specific colour' do
+      bitmap = Bitmap.new(4, 5)
+
+      bitmap.paint!(1, 2, 'A')
+      bitmap.paint!(1, 3, 'A')
+      bitmap.paint!(2, 1, 'A')
+      bitmap.paint!(2, 4, 'A')
+      bitmap.paint!(3, 2, 'A')
+      bitmap.paint!(3, 3, 'A')
+      bitmap.paint!(3, 4, 'A')
+
+      bitmap.fill!(2, 2, 'K')
+
+      expected =
+        "OAOO\n" +
+        "AKAO\n" +
+        "AKAO\n" +
+        "OAAO\n" +
+        "OOOO\n"
+
+      assert_equal expected, bitmap.inspect
+    end
+
+    test 'given a bitmap with non-white colours, it fills an area with a specific colour' do
+      bitmap = Bitmap.new(4, 5)
+      bitmap.fill!(1, 1, 'K')
+      bitmap.paint!(1, 2, 'A')
+      bitmap.paint!(1, 3, 'A')
+
+      bitmap.fill!(1, 2, 'W')
+
+      expected =
+        "KKKK\n" +
+        "WKKK\n" +
+        "WKKK\n" +
+        "KKKK\n" +
+        "KKKK\n"
+
+      assert_equal expected, bitmap.inspect
+    end
+
+    test 'fills the bitmap with the specific colour even when it is on a border' do
+      bitmap = Bitmap.new(4, 5)
+
+      bitmap.paint!(1, 2, 'A')
+      bitmap.paint!(1, 3, 'A')
+      bitmap.paint!(2, 1, 'A')
+      bitmap.paint!(2, 4, 'A')
+      bitmap.paint!(3, 2, 'A')
+      bitmap.paint!(3, 3, 'A')
+      bitmap.paint!(3, 4, 'A')
+
+      bitmap.fill!(4, 1, 'K')
+
+      expected =
+        "OAKK\n" +
+        "AOAK\n" +
+        "AOAK\n" +
+        "KAAK\n" +
+        "KKKK\n"
+
+      assert_equal expected, bitmap.inspect
+    end
+
+    test 'raise an error if the initial pixel is out of bounds' do
+      bitmap = Bitmap.new(2, 2)
+
+      assert_raise(ArgumentError, "invalid row") {    bitmap.fill!(1, 5, 'C') }
+      assert_raise(ArgumentError, "invalid column") { bitmap.fill!(5, 1, 'C') }
+    end
+  end
+
   context '[]' do
     test 'returns the colour of the given pixel' do
       bitmap = Bitmap.new(2, 2)
