@@ -47,6 +47,11 @@ class BitmapEditor
       validate_arguments_size(command, args, 3)
 
       @bitmap.paint!(*args)
+    when 'F'
+      validate_bitmap_presence(command)
+      validate_arguments_size(command, args, 3)
+
+      @bitmap.fill!(*args)
     when 'V'
       validate_bitmap_presence(command)
       validate_arguments_size(command, args, 4)

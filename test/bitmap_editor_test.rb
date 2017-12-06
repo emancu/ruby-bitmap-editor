@@ -77,6 +77,38 @@ Protest.describe 'BitmapEditor' do
       end
     end
 
+    context 'F' do
+      test 'validates bitmap presence' do
+        assert_raise(RuntimeError) { @editor.execute_command!('F', []) }
+      end
+
+      test 'accepts only 3 arguments' do
+        attach_bitmap(@editor)
+
+        assert_error_message(ArgumentError, /^Wrong number of arguments .* expected 3/) do
+          @editor.execute_command!('F', [])
+        end
+      end
+
+      test 'fill the bitmap with the same colour as the given a pixel' do
+        bitmap = Bitmap.new(4, 4)
+        bitmap.paint!(1, 3, 'D')
+        bitmap.paint!(2, 1, 'D')
+        bitmap.paint!(2, 2, 'D')
+        attach_bitmap(@editor, bitmap)
+
+        @editor.execute_command!('F', ['1', '1', 'G'])
+
+        expected =
+          "GDOO\n" +
+          "GDOO\n" +
+          "DOOO\n" +
+          "OOOO\n"
+
+        assert_equal expected, bitmap.inspect
+      end
+    end
+
     context 'V' do
       test 'validates bitmap presence' do
         assert_raise(RuntimeError) { @editor.execute_command!('V', []) }
