@@ -14,13 +14,14 @@ Colours are specified by capital letters.
 
 
 ## Commands
-There are 6 supported commands:
+There are 7 supported commands:
 1. I M N - Create a new M x N image with all pixels coloured white (O).
 2. C - Clears the table, setting all pixels to white (O).
 3. L X Y C - Colours the pixel (X,Y) with colour C.
 4. V X Y1 Y2 C - Draw a vertical segment of colour C in column X between rows Y1 and Y2 (inclusive).
 5. H X1 X2 Y C - Draw a horizontal segment of colour C in row Y between columns X1 and X2 (inclusive).
 6. S - Show the contents of the current image
+7. F X Y C - Fill an area adjacent to the pixel (X,Y) with colour C.
 
 
 ## Example
